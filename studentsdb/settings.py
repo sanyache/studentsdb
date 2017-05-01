@@ -24,7 +24,7 @@ SECRET_KEY = '-1h6=v&gy+kpl_-)-dmwyvy4cg-1mly^l345n%%*x41=t$+2k%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+PORTAL_URL='http://localhost:8000'
 ALLOWED_HOSTS = []
 
 
@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'studentsdb.context_processors.students_proc'
             ],
         },
     },
@@ -119,3 +120,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+from django.conf import global_settings
+
