@@ -3,9 +3,10 @@
 {% block meta_title %}Групи{% endblock meta_title %}
 {% block title %}База груп{% endblock title %}
 {% block content %}
-<a href="{% url 'groups_add' %}" class="btn btn-primary">Додати групу</a>
+<a  id="btn1" class="btn btn-primary">Додати групу</a>
                      <!--Start student listing-->
                      <table class="table table-hover table-striped">
+                         <h2 id="cl">Head</h2>
                          <thead>
                              <tr>
                                  <th><a href=""></a> №</th>
@@ -22,6 +23,12 @@
                              </tr>
                          </thead>
                          <tbody>
+                         $(<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                         <script> $(document).ready(function(){
+                              $("#btn1").click(function(){
+                              $("cl").load("<p>Appended item</p>");
+                              });
+                          </script>
                              {% for group in groups %}
                              <tr>
                                  <td>{{ forloop.counter}}</td>
@@ -39,11 +46,11 @@
                                                     href="#">Відвідування</a>
                                              </li>
                                              <li role="presentation">
-                                                 <a role="menuitem" tabindex="-1" href="{% url 'groups_edit' group.id %}"
+                                                 <a role="menuitem" tabindex="-1" href="#"
                                                     >Редагувати</a>
                                              </li>
                                              <li role="presentation">
-                                                 <a role="menuitem" tabindex="-1" href="{% url 'groups_delete' group.id %}"
+                                                 <a role="menuitem" tabindex="-1" href="#"
                                                     >Видалити</a>
                                              </li>
                                          </ul>
@@ -51,6 +58,8 @@
                                  </td>
                              </tr>
                          {% endfor %}
+
+
                          </tbody>
                      </table>
 

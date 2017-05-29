@@ -18,4 +18,7 @@ h1,h2,h3,h4,h5,h6{
    height: 30px;
    line-height: 30px;
    color: #555555;
+#searh_student{
+    width: 100px;
+}
 }

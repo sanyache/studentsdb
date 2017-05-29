@@ -27,7 +27,7 @@ def students_list(request):
 def students_edit(request,sid):
     return HttpResponse('<h1>Edit students %s</h1>'% sid)
 def students_add(request):
-    return HttpResponse('<h1>Add Students </h1>')
+    return render(request,'students/students_add.html',{})
 def students_delete(request,sid):
     return HttpResponse('<h1>Delete Students %s</h1>'% sid)
 def groups_add(request):

@@ -74,11 +74,16 @@ WSGI_APPLICATION = 'studentsdb.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'..','media')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR,'..', 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+	'HOST':'127.0.0.1',
+	'USER':'alex_root',
+	'PASSWORD':'8800',
+	'NAME':'students_db',
+        #'NAME': os.path.join(BASE_DIR,'..', 'db.sqlite3'),
     }
 }
 

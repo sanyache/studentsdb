@@ -1,32 +1,36 @@
 {% extends "students/base.html" %}
 {% load static from staticfiles %}
-{% block meta_title %}Групи{% endblock meta_title %}
-{% block title %}База груп{% endblock title %}
+{% block meta_title %}Екзамени{% endblock meta_title %}
+{% block title %}Розклад екзаменів{% endblock title %}
 {% block content %}
-<a href="{% url 'groups_add' %}" class="btn btn-primary">Додати групу</a>
+<a href="{% url "exam_add" %}" class="btn btn-primary">Додати екзамен</a>
                      <!--Start student listing-->
                      <table class="table table-hover table-striped">
                          <thead>
                              <tr>
                                  <th><a href=""></a> №</th>
                                  <th>
-                                     <a href="{% url "groups" %}?order_by=date_exam{% if request.GET.order_by == 'date_exam' and request.GET.reverse != '1' %}&amp;reverse=1{% endif %}">
-                                        Назва
-                                         {% if request.GET.order_by == 'date_exam' and request.GET.reverse != '1' %}&uarr;
-                                           {% elif request.GET.order_by == 'date_exam' and request.GET.reverse == '1' %}&darr;
+                                     <a href="{% url "exam" %}?order_by=title{% if request.GET.order_by == 'title' and request.GET.reverse != '1' %}&amp;reverse=1{% endif %}">
+                                        Дата проведення
+                                         {% if request.GET.order_by == 'title' and request.GET.reverse != '1' %}&uarr;
+                                           {% elif request.GET.order_by == 'title' and request.GET.reverse == '1' %}&darr;
                                          {% endif %}
                                      </a>
                                  </th>
-                                 <th><a href="{% url "groups" %}"> Староста </a></th>
+                                 <th><a href="{% url "exam" %}"> Група </a></th>
+                                 <th>Предмет</th>
+                                 <th>Викладач</th>
                                  <th>Дії</th>
                              </tr>
                          </thead>
                          <tbody>
-                             {% for group in groups %}
+                             {% for exam in exams %}
                              <tr>
                                  <td>{{ forloop.counter}}</td>
-                                 <td><a title="Редагувати" href="#"> {{group.title }}</a> </td>
-                                 <td><a title="Редагувати" href="#">{{group.leader}}</a> </td>
+                                 <td><a title="Редагувати" href="#"> {{exam.date_exam }}</a></td>
+                                 <td><a title="Редагувати" href="#">{{exam.group_exam}}</a> </td>
+                                 <td>{{exam.subject}}</td>
+                                 <td>{{exam.teacher}}</td>
                                  <td>
                                      <div class="dropdown">
                                          <button class="btn btn-default dropdown-toggle"
@@ -34,16 +38,13 @@
                                              <span class="caret"></span>
                                          </button>
                                          <ul class="dropdown-menu" role="menu">
+
                                              <li role="presentation">
-                                                 <a role="mrnuitem" tabindex="-1"
-                                                    href="#">Відвідування</a>
-                                             </li>
-                                             <li role="presentation">
-                                                 <a role="menuitem" tabindex="-1" href="{% url 'groups_edit' group.id %}"
+                                                 <a role="menuitem" tabindex="-1" href="{% url 'exam_edit' exam.id %}"
                                                     >Редагувати</a>
                                              </li>
                                              <li role="presentation">
-                                                 <a role="menuitem" tabindex="-1" href="{% url 'groups_delete' group.id %}"
+                                                 <a role="menuitem" tabindex="-1" href="{% url 'exam_delete' exam.id %}"
                                                     >Видалити</a>
                                              </li>
                                          </ul>
