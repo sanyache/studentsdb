@@ -7,6 +7,8 @@ from .models.students import Student
 from .models.groups import Group
 from .models.exam import Exam
 from  django.forms import ModelForm,ValidationError
+from functools import partial
+from django.forms.models import modelformset_factory
 # Register your models here.
 class StudentFormAdmin(ModelForm):
 
@@ -16,7 +18,7 @@ class StudentFormAdmin(ModelForm):
         If yes, then ensure it's the same as selected group."""
         # get group where current student is a leader
         groups = Group.objects.filter(leader=self.instance)
-        if groups and    self.cleaned_data['student_group'] != groups[0].title:
+        if len(groups)>0 and    self.cleaned_data['student_group'] != groups[0]:
             raise ValidationError(u'Студент є старостою іншої групи.',
                 code='invalid')
 
@@ -31,15 +33,23 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ['last_name', 'first_name', 'middle_name', 'ticket',
         'notes']
     form = StudentFormAdmin
+    def get_changelist_formset(self, request, **kwargs):
+	defaults = {
+	    "formfield_callback": partial(super(StudentAdmin,self).formfield_for_dbfield, request=request),
+	    "form": StudentFormAdmin,
+	}
+	defaults.update(kwargs)
+	return modelformset_factory(Student,
+				    extra=0,
+				    fields=self.list_editable, **defaults)
+
 
     def view_on_site(self, obj):
         return reverse('students_edit', kwargs={'pk': obj.id})
 
 class GroupFormAdmin(ModelForm):
     def clean_leader(self):
-	#students = Student.objects.filter(student_group=self.instance)
-	group=self.cleaned_data.get('title')
-	students = Student.objects.filter(student_group=group)
+	students = Student.objects.filter(student_group=self.instance)
 	if self.cleaned_data['leader'] not in students:
 	   raise ValidationError(u'Студент в іншій групі', code='invalid')
 	return self.cleaned_data['leader']
@@ -52,6 +62,15 @@ class GroupAdmin(admin.ModelAdmin):
     list_per_page = 10
     search_fields = ['leader']
     form = GroupFormAdmin
+    def get_changelist_formset(self, request, **kwargs):
+	defaults = {
+	    "formfield_callback": partial(super(GroupAdmin, self).formfield_for_dbfield, request=request),
+	    "form": GroupFormAdmin,
+	}
+	defaults.update(kwargs)
+	return modelformset_factory(Group,
+				    extra=0,
+				    fields=self.list_editable, **defaults)
     def view_on_site(self,obj):
 	return reverse('groups_edit', kwargs={'pk': obj.id})
     

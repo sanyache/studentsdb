@@ -49,7 +49,7 @@ def groups_delete(request,gid):
 def exam(request):
     exams=Exam.objects.all()
     order_by=request.GET.get('order_by','')
-    if order_by in ('data_exam','group_exam'):
+    if order_by in ('date_exam','group_exam'):
 	exams=exams.order_by(order_by)
 	if request.GET.get('reverse', '') == '1':
 	    exams=exams.reverse()

@@ -93,8 +93,12 @@ def students_add(request):
 		    data['student_group']=groups[0]
 	    photo=request.FILES.get('photo')
 	    if photo:
+		if photo.size > 2*1024*1024:
+		    errors['photo']=u"Розмір файлу не  повинен перевищувати  2Мб"
+		if photo.content_type not in ['image/jpeg','image/jpg','image/png']:
+		    errors['photo']= u"Тільки файли типу jpeg,jpg,png"
 		data['photo']=photo
-
+	    else: errors['photo']=u"НЕ завантажено"
 	    if not errors:
 	      student = Student(**data)
               student.save()

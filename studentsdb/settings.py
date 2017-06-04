@@ -25,6 +25,14 @@ SECRET_KEY = '-1h6=v&gy+kpl_-)-dmwyvy4cg-1mly^l345n%%*x41=t$+2k%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 PORTAL_URL='http://localhost:8000'
+ADMIN_EMAIL = 'tsabiy_viktor@ukr.net'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '465'
+EMAIL_HOST_USER = 'sanyache75@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'students',
 ]
 
@@ -69,6 +78,7 @@ TEMPLATES = [
     },
 ]
 
+CRISPY_TEMPLATE_PACK='bootstrap3'
 WSGI_APPLICATION = 'studentsdb.wsgi.application'
 
 
