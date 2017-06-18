@@ -6,7 +6,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from ..models.groups import Group
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView,UpdateView,DeleteView
-
+from ..util import paginate, get_current_group
 
 
 class GroupCreateView(CreateView):
@@ -50,4 +50,5 @@ def groups_list(request):
 	groups=groups.order_by(order_by)
 	if request.GET.get('reverse', '') == '1':
 	    groups=groups.reverse()
-    return render(request,'students/groups_list.html',{'groups':groups})
+    context = paginate(groups, 3, request, {}, var_name='groups')
+    return render(request,'students/groups_list.html', context)

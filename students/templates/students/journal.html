@@ -3,45 +3,67 @@
 {% block meta_title %}Журнал{% endblock meta_title %}
 {% block title %}Облік відвідування{% endblock title %}
 {% block content %}
-
+{% if not students %}
+    <div class="alert alert-warning">
+        Поки немає жодного студента в базі. Будь-ласка,
+        <a href="{% url 'students_add' %}">додайте</a> першого
+    </div>
+{% else %}
+    <div class="alert alert-warning">
+        Зміни в журнілі зберігаються автоматично при кожному кліку в клітинці.
+        <span id="ajax-progress-indicator">Йде збереження</span>
+    </div>
                      <!--Start student listing-->
-                     <p class="text-center"><a href="#">&larr;</a>Травень 2017<a href="#">&rarr;</a> </p>
-                     <table class="table table-hover table-striped">
+                     <p class="text-center" id="journal-nav" ><a href="?month={{ prev_month }}" title="Попередній місяць">&larr;</a>
+                        <strong>{{ month_verbose }} {{ year }}</strong>
+                         <a href="?month={{ next_month }}" title="Наступний місяць">&rarr;</a>
+                     </p>
+                     <table class="table table-hover table-striped table-bordered" id="student-journal">
                          <thead>
-                             <tr>
-                                 <th><a href=""></a> №</th>
-                                 <th>Студент</th>
-                                 {% for i in range %}
+                             <tr class="header">
+                                 <th class="num"> №</th>
+                                 <th class="name">Студент</th>
+                                 {% for day in month_header %}
 
-                                 <th>{{forloop.counter}}</th>
+                                 <th class="day-header">{{day.verbose}}<br/>{{day.day}}</th>
 
                                  {% endfor %}
                              </tr>
                          </thead>
                          <tbody>
+                             {% csrf_token %}
                              {% for student in students %}
                              <tr>
-                                 <td>{{student.id}}</td>
-                                 <td>{{student.last_name}} {{student.first_name}}</td>
-                                 {% for i in range %}
-                                 <td><input type="checkbox" value=""></td>
+                                 <td>
+                                     {% if is_paginated %}
+                                     {{ page_obj.start_index| add:forloop.counter| add:"-1" }}
+                                     {% else %}
+                                     {{ forloop.counter }}
+                                     {% endif %}
+
+                                 </td>
+                                 <td>
+                                     <a title="Редагувати" target="_blank" href="{% url 'students_edit' student.id %}">
+                                         {{ student.fullname }}
+                                     </a>
+                                 </td>
+                                 {% for day in student.days %}
+                                 <td class="day-box">
+                                     <input type="checkbox" data-student-id="{{ student.id }}"
+                                            data-date="{{ day.date }}" data-url="{{ student.update_url }}"
+                                            value="1"{% if day.present %} checked="checked" {% endif %}>
+                                 </td>
                                  {% endfor%}
                              </tr>
                              {% endfor %}
 
                          </tbody>
                      </table>
-                     <!-- End student listing -->
-                     <nav>
-                         <ul class="pagination">
-                             <li><a href="#">&laquo;</a> </li>
-                             <li><a href="#">1</a> </li>
-                             <li class="active"><a href="#">2</a> </li>
-                             <li><a href="#">3</a> </li>
-                             <li><a href="#">4</a> </li>
-                             <li><a href="#">&raquo;</a> </li>
-                         </ul>
-                     </nav>
-                     {% endblock content %}
+{% endif %}
+
+{% with object_list=students %}
+  {% include "students/pagination.html" %}
+{% endwith %}
+{% endblock content %}
 
 

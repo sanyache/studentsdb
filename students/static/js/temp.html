@@ -1,0 +1,29 @@
+function initEditStudentPage(){
+    $('a.student-edit-form-link').click(function(event){
+        var link = $(this);
+        $.ajax({
+            'url': link.attr('href'),
+            'dataType': 'html',
+            'type': 'get',
+            'success': function(data, status, xhr){
+                if (status != 'success'){
+                    alert('Помилка на сервері.Спробуйте пізніше');
+                    return false;
+                }
+
+            var modal = $('#myModal'),
+                html = $(data), form = html.find('#content-column form');
+            modal.find('.modal-title').html(html.find('#content-column h2').text());
+            modal.find('.modal-body').html(form);
+            initEditStudentForm(form, modal);
+            modal.modal('show');
+            },
+            'error': function(){
+                alert('Помилка на сервері');
+                return false;
+            }
+        });
+
+        return false;
+    });
+}

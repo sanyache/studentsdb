@@ -10,10 +10,19 @@ from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from datetime import datetime
 from django.views.generic import UpdateView,DeleteView
 from django.core.exceptions import ValidationError
+from django.forms import ModelForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from crispy_forms.bootstrap import FormActions
 #from Classes.CustomForm import CustomForm
 from django.contrib import messages
+from ..util import paginate, get_current_group
 def students_list(request):
-    students=Student.objects.all()
+    current_group = get_current_group(request)
+    if current_group :
+	students = Student.objects.filter(student_group=current_group)
+    else:
+	students=Student.objects.all()
     order_by=request.GET.get('order_by','')
     if request.method == 'POST':
 	if request.POST.get('search_button') is not None:
@@ -38,15 +47,9 @@ def students_list(request):
 	      students=students.order_by('student_group__title')
     if request.GET.get('reverse','')=='1':
 	students=students.reverse()
-    paginator=Paginator(students,3)
-    page=request.GET.get('page')
-    try:
-	students=paginator.page(page)
-    except PageNotAnInteger:
-	    students=paginator.page(1)
-    except EmptyPage:
-	    students=paginator(paginator.num_pages)
-    return render(request,'students/students_list.html',{'students': students})
+    context = paginate(students, 3, request, {}, var_name='students')
+    
+    return render(request,'students/students_list.html',context)
 def students_edit(request,sid):
     return HttpResponse('<h1>Edit students %s</h1>'% sid)
 def students_add(request):
@@ -129,10 +132,34 @@ def students_add(request):
 #        if len(group) > 0 and self.cleaned_data['student_group'] != group[0]:
 #            raise ValidationError(u'Студент є старостою іншою групою', code='invalid')
 #    	return self.cleaned_data['student_group']
+class StudentUpdateForm(ModelForm):
+    class Meta:
+	model = Student
+	fields = '__all__'
+    def __init__(self, *args, **kwargs):
+	super(StudentUpdateForm, self).__init__(*args, **kwargs)
+	
+	self.helper = FormHelper(self)
+	self.helper.form_action = reverse('students_edit', kwargs={'pk': kwargs['instance'].id})
+	self.helper.form_method = 'POST'
+	self.helper.form_class = 'form-horizontal'
+
+	self.helper.help_text_inline = True
+	self.helper.html5_required = True
+	self.helper.label_class = 'col-sm-2 control-label'
+	self.helper.field_class = 'col-sm-10'
+
+	self.helper.layout[-1] = FormActions(
+	    Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
+	    Submit('cancel_button', u'Скасувати', css_class="btn btn-link"),
+	    )
+
+
 class StudentUpdateView(UpdateView):
     model = Student
     template_name = 'students/students_edit.html'
-    fields='__all__'
+    
+    form_class = StudentUpdateForm
     def get_success_url(self):
 	return u'%s?status_message=Студента успішно збережено!' % reverse('home')
 

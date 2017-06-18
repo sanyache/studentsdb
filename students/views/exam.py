@@ -6,6 +6,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from ..models.exam import Exam
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView,UpdateView,DeleteView
+from ..util import paginate, get_current_group
 #class GroupCreateForm(ModelForm):
 #    class Meta:
 #	model = Group
@@ -53,4 +54,5 @@ def exam(request):
 	exams=exams.order_by(order_by)
 	if request.GET.get('reverse', '') == '1':
 	    exams=exams.reverse()
-    return render(request,'students/exam.html',{'exams':exams})
+    context = paginate(exams, 3, request, {}, var_name='exams')
+    return render(request,'students/exam.html',context)

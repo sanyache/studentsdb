@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from .models.students import Student
 from .models.groups import Group
 from .models.exam import Exam
+from .models.monthjournal import MonthJournal
 from  django.forms import ModelForm,ValidationError
 from functools import partial
 from django.forms.models import modelformset_factory
@@ -77,3 +78,4 @@ class GroupAdmin(admin.ModelAdmin):
 admin.site.register(Student,StudentAdmin)
 admin.site.register(Group,GroupAdmin)
 admin.site.register(Exam)
+admin.site.register(MonthJournal)

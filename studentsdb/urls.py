@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 from students.views.students import StudentUpdateView,StudentDeleteView
 from students.views.groups import GroupCreateView,GroupUpdateView,GroupDeleteView
 from students.views.exam import ExamCreateView,ExamUpdateView,ExamDeleteView
+from students.views.journal import JournalView
 #from students.views.contact_admin import 
 urlpatterns = [
     url(r'^$',students.students_list,name='home'),
@@ -37,7 +38,7 @@ urlpatterns = [
     url(r'^groups/(?P<pk>\d+)/edit/$',GroupUpdateView.as_view(),name='groups_edit'),
     url(r'^groups/(?P<pk>\d+)/delete/$',GroupDeleteView.as_view(),name='groups_delete'),
 
-    url(r'^journal/$',journal.journal,name='journal'),
+    url(r'^journal/(?P<pk>\d+)?/?$',JournalView.as_view(),name='journal'),
 
     url(r'^exam/$',exam.exam,name='exam'),
     url(r'^exam/add/$',ExamCreateView.as_view(),name='exam_add'),
