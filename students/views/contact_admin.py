@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+import logging
 from django.shortcuts import render
 from django import forms
 from django.core.mail import send_mail
@@ -8,6 +10,7 @@ from django.core.urlresolvers import reverse
 from studentsdb.settings import ADMIN_EMAIL
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.decorators import permission_required
 
 class ContactForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -39,6 +42,7 @@ class ContactForm(forms.Form):
 	label = u"Текст повідомлення",
 	max_length=2560,
 	widget=forms.Textarea)
+@permission_required('auth.add_user')
 def contact_admin(request):
 	if request.method == 'POST':
 	    form = ContactForm(request.POST)
@@ -50,6 +54,8 @@ def contact_admin(request):
 		    send_mail(subject,message,from_email,[ADMIN_EMAIL])
 		except Exception:
 		    message = u"Під час відправки виникла помилка"
+		    logger = loggin.getLogger(__name__)
+		    logger.exception(message)
 		else :
 		    message = u"Повідомлення успішно надіслане"
 		return HttpResponseRedirect(u'%s?status_message=%s' % (reverse('contact_admin'),

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 class Group(models.Model):
     class Meta(object):
+	ordering = ['title']
 	verbose_name=u"Група"
 	verbose_name_plural=u"Групи"
     title=models.CharField(

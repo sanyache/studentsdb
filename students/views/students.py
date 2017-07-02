@@ -17,6 +17,10 @@ from crispy_forms.bootstrap import FormActions
 #from Classes.CustomForm import CustomForm
 from django.contrib import messages
 from ..util import paginate, get_current_group
+from django.utils.translation import ugettext as _
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 def students_list(request):
     current_group = get_current_group(request)
     if current_group :
@@ -40,7 +44,7 @@ def students_list(request):
 	    if  students  :
 	       return render(request,'students/students_list.html',{'students':students} )
 	    else:
-		return  HttpResponseRedirect(u'%s?status_message=Студента не знайдено' % reverse('home'))
+		return  HttpResponseRedirect(u'%s?status_message=%s' % (reverse('home'), _(u"Student not founded")))
     if order_by in ('last_name','first_name','ticket'):
         students=students.order_by(order_by)
     elif order_by in ('student_group'):
@@ -52,6 +56,8 @@ def students_list(request):
     return render(request,'students/students_list.html',context)
 def students_edit(request,sid):
     return HttpResponse('<h1>Edit students %s</h1>'% sid)
+
+@login_required
 def students_add(request):
 
     if request.method == "POST":
@@ -62,59 +68,59 @@ def students_add(request):
 		    }
 	    first_name=request.POST.get('first_name','').strip()
 	    if not first_name:
-		errors['first_name']=u"Ім'я є обов'язковим"
+		errors['first_name']=_(u"First name field is required")
 	    else:
 		data['first_name']=first_name
 	    last_name=request.POST.get('last_name','').strip()
 	    if not last_name:
-		errors['last_name']=u"Прізвище є обов'язковим"
+		errors['last_name']=_(u"Last name is required")
 	    else:
 		data['last_name']=last_name
 	    birthday=request.POST.get('birthday','').strip()
 	    if not birthday:
-		errors['birthday']=u"Дата народження є обов'язковою"
+		errors['birthday']=_(u"Birthday field is required")
 	    else:
 		try:
 		    datetime.strptime(birthday,'%Y-%m-%d')
 		except Exception:
-		    errors['birthday']=u"Введіть коректний формат"
+		    errors['birthday']=_(u"Enter correct format")
 		else:
 		    data['birthday']=birthday
 	    ticket=request.POST.get('ticket','').strip()
 	    if not ticket:
-		errors['ticket']=u"Номер білету є обов'язковим"
+		errors['ticket']=_(u"Number of ticket is required ")
 	    else:
 		data['ticket']=ticket
 	    student_group=request.POST.get('student_group','').strip()
 	    if not student_group:
-		errors['student_group']=u"Оберіть групу"
+		errors['student_group']=_(u"Select group")
 	    else:
 		groups=Group.objects.filter(pk=student_group)
 		if len(groups) !=1:
-		    errors['student_group']=u"Оберіть групу з існуючих"
+		    errors['student_group']=_(u"Select a group from the existing ones ")
 		else:
 		    data['student_group']=groups[0]
 	    photo=request.FILES.get('photo')
 	    if photo:
 		if photo.size > 2*1024*1024:
-		    errors['photo']=u"Розмір файлу не  повинен перевищувати  2Мб"
+		    errors['photo']=_(u"Size of photo should not exceed  2Мб")
 		if photo.content_type not in ['image/jpeg','image/jpg','image/png']:
-		    errors['photo']= u"Тільки файли типу jpeg,jpg,png"
+		    errors['photo']= _(u"Only type file jpeg,jpg,png")
 		data['photo']=photo
-	    else: errors['photo']=u"НЕ завантажено"
+	    else: errors['photo']=_(u"Not loaded")
 	    if not errors:
 	      student = Student(**data)
               student.save()
-	      return HttpResponseRedirect(u'%s?status_message=Студента успішно додано!'%
-					    reverse('home'))
+	      return HttpResponseRedirect(u'%s?status_message=%s'%
+									  (reverse('home'), _(u"Student added successfully")))
 	    else :
 		#render form with errors and previous user input
 		return render(request, 'students/students_add.html',
 		    {'groups': Group.objects.all().order_by('title'),
 		     'errors': errors})
 	elif request.POST.get('cancel_button') is not None:
-	    return HttpResponseRedirect(u'%s?status_message=Додавання студента скасовано!' %
-					 reverse ('home'))
+	    return HttpResponseRedirect(u'%s?status_message=%s' %
+									(reverse ('home'), _(u"Student addition canceled ")))
     else:
 	# initial form render
         return render(request,'students/students_add.html',{'groups':Group.objects.all().order_by('title')})
@@ -150,8 +156,8 @@ class StudentUpdateForm(ModelForm):
 	self.helper.field_class = 'col-sm-10'
 
 	self.helper.layout[-1] = FormActions(
-	    Submit('add_button', u'Зберегти', css_class="btn btn-primary"),
-	    Submit('cancel_button', u'Скасувати', css_class="btn btn-link"),
+	    Submit('add_button', _(u'Save'), css_class="btn btn-primary"),
+	    Submit('cancel_button', _(u'Cancel'), css_class="btn btn-link"),
 	    )
 
 
@@ -161,18 +167,24 @@ class StudentUpdateView(UpdateView):
     
     form_class = StudentUpdateForm
     def get_success_url(self):
-	return u'%s?status_message=Студента успішно збережено!' % reverse('home')
+	return u'%s?status_message=%s' % (reverse('home'), _(u"Student update successfully"))
 
     def post(self,request,*args,**kwargs):
-	if request.POST.get('cancel'):
+	if request.POST.get('cancel_button'):
 	    return HttpResponseRedirect(
-		u'%s?status_message=Редагування студента відмінено!'% reverse('home'))
+		u'%s?status_message=%s'% (reverse('home'), _(u"Student update canceled")))
 	else:
 	    return super(StudentUpdateView,self).post(request,*args,**kwargs)
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+	return super(StudentUpdateView, self).dispatch(*args, **kwargs)
 class StudentDeleteView(DeleteView):
     model = Student
     template_name = 'students/students_confirm_delete.html'
     def get_success_url(self):
-	return u'%s?status_message=Студента успішно видалино!' % reverse('home')
+	return u'%s?status_message=%s' % (reverse('home'), _(u"Student deleted successfully"))
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+	return super(StudentDeleteView, self).dispatch(*args, **kwargs)
 def students_search(request):
     return render(request,'students/students_search.html')

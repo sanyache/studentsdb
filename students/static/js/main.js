@@ -55,7 +55,7 @@ function initEditStudentPage(){
             'type': 'get',
             'success': function(data, status, xhr){
                 if (status != 'success'){
-                    alert('Помилка на сервері.Спробуйте пізніше');
+                    alert(gettext('There was an error on the server. Please, try again a bit later'));
                     return false;
                 }
 
@@ -71,7 +71,7 @@ function initEditStudentPage(){
             });
             },
             'error': function(){
-                alert('Помилка на сервері');
+                alert(gettext('There was an error on the server. Please, try again a bit later'));
                 return false;
             }
         });
@@ -89,7 +89,7 @@ function initEditStudentForm(form, modal){
     form.ajaxForm({
         'dataType': 'html',
         'error': function(){
-            alert('Помилка на сервері');
+            alert(gettext('There was an error on the server. Please, try again a bit later'));
             return false;
         },
         'success': function(data, status, xhr){
@@ -105,7 +105,18 @@ function initEditStudentForm(form, modal){
     });
 }
 
-
+function initLangSelector(){
+    $('#lang-selector select').change(function(event){
+        var lang = $(this).val();
+        if (lang) {
+            $.cookie('django_language', lang, {'path': '/', 'expires': 365});
+        } else {
+            $.removeCookie('django_language', {'path': '/'});
+          }
+        location.reload(true);
+        return true;
+    });
+}
 
 $(document).ready(function(){
    // initNavigation();
@@ -113,4 +124,5 @@ $(document).ready(function(){
     initGroupSelector();
     initDateFields();
     initEditStudentPage();
+    initLangSelector();
 });

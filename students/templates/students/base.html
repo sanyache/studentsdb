@@ -1,11 +1,12 @@
+{% load i18n %}
 {% load static from staticfiles %}
 <!DOCTYPE html>
 <html xml:lang="uk">
     <head>
          <meta charset="UTF-8"/>
-         <title>Сервіс Обліку Студентів-{% block meta_title %}{% endblock meta_title%}</title>
+         <title>{% trans "Student Accounting Service" %}-{% block meta_title %}{% endblock meta_title%}</title>
          <meta name="description"
-               value="Система Обліку Стедентів Навчального Закладу" />
+               value="{% trans 'App to manage students database' %}" />
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.css" />
@@ -23,19 +24,40 @@
              <!--Start Header -->
              <div class="row" id="header">
                  <!--logotip -->
-                 <div class="col-xs-8">
-                     <h1>Сервіс обліку студентів</h1>
+                 <div class="col-xs-6">
+                     <h1>{% trans "Student Accounting Service" %}</h1>
                  </div>
                  <!--Group Selector-->
-                 <div class="col-xs-4" id="group-selector">
-                     <strong>Група</strong>
+                 {% if user.is_authenticated  %}
+                 <div class="col-xs-2" id="group-selector">
+                     <strong>{% trans "Group:" %}</strong>
                      <select>
-                         <option value="">Усі студенти</option>
+                         <option value="">{% trans "All Students" %}</option>
                          {% for group in GROUPS %}
                          <option value="{{ group.id }}"{% if group.selected %}selected="1"{% endif %}>
                              {{ group.title }}{% if group.leader %},{{ group.leader }}{% endif %}</option>
                          {% endfor %}
                      </select>
+                 </div>
+                 <div class="col-xs-2" id="user-toolbar">
+                     <a href="{% url 'profile' %}">{{ user.get_full_name|default:user.username }}</a>
+                     <a href="{% url 'users:auth_logout' %}">{% trans "Logout" %}</a>
+                 </div>
+                 {% else %}
+                 <div class="col-xs-6" id="user-toolbar">
+                     <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">{% trans "via Facebook" %}</a>
+                     <a href="{% url 'users:auth_login'  %}">{% trans "Login" %}</a>
+                     <a href="{% url 'users:registration_register' %}">{% trans "Register" %}</a>
+                 </div>
+                 {% endif %}
+                 <div class="col-xs-2" id="lang-selector">
+                     <strong class="glyphicon glyphicon-globe"></strong>
+                     <select>
+                        <option  value="" >{{ LANG }}</option>
+                        <option value="uk">Українська</option>
+                        <option value="en">English</option>
+                     </select>
+
                  </div>
              </div>
              <!--End Header-->
@@ -43,11 +65,15 @@
              <div class="row" id="sub-header">
                  <div class="col-xs-12">
                      <ul class="nav nav-tabs " id="menu" role="tablist">
-                         <li class="" role="presentation" {% if '/' in  request.path  %} class="active" {% endif %}><a href="{% url 'home'%}">Студенти</a> </li>
-                         <li class="journal" role="presentation" {% if '/journal' in request.path %} class="active"{% endif %}><a href=" /journal">Відвідування</a> </li>
-                         <li class="groups" role="presentation" {% if '/groups' in request.path %}  class="active"{% endif %}><a href="{% url 'groups' %}">Групи</a> </li>
-                         <li class="exam" role="presentation" {% if '/exam' in request.path %} class="active"{% endif %}><a href="{% url 'exam' %}">Екзамени</a>  </li>
-                         <li role="presentation" {% if '/contact_admin' in request.path %} class="activate"{% endif %} > <a href="{% url 'contact_admin' %}">Контакт</a></li>
+                         <li role="presentation" {% if  request.path == '/' %} class="active" {% endif %}><a href="{% url 'home'%}">{% trans "Students" %}</a> </li>
+                         {% if user.is_authenticated %}
+                         <li role="presentation" {% if '/journal' in request.path %} class="active"{% endif %}><a href=" /journal">{% trans "Journal" %}</a> </li>
+                         <li role="presentation" {% if '/groups' in request.path %} class="active"{% endif %}><a href="{% url 'groups' %}">{% trans "Groups" %}</a> </li>
+                         <li role="presentation" {% if '/exam' in request.path %} class="active"{% endif %}><a href="{% url 'exam' %}">{% trans "Exams" %}</a>  </li>
+                         {% endif %}
+                         {% if perms.auth.add_user %}
+                         <li role="presentation" {% if '/contact_admin' in request.path %} class="active"{% endif %} > <a href="{% url 'contact_admin' %}">{% trans "Contact" %}</a></li>
+                         {% endif %}
                      </ul>
                  </div>
              </div>
@@ -98,6 +124,7 @@
          <script src="https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js"></script>
          <script data-require="MomentJS@2.10.0" data-semver="2.10.0" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
          <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+         <script  type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
          <script src="{% static 'js/main.js' %}"></script>
          {% block extra_js %}{% endblock extra_js %}
     </body>

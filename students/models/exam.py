@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 class Exam(models.Model):
     class Meta(object):
+	ordering = ['group_exam']
 	verbose_name=u"Екзамен"
 	verbose_name_plural=u"Екзамени"
     date_exam=models.DateTimeField(

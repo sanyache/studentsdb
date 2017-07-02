@@ -1,3 +1,4 @@
+#-*-coding: utf-8 -*-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def paginate(objects, size, request, context, var_name='object_list'):
@@ -42,3 +43,13 @@ def get_current_group(request):
             return group
     else:
         return None
+
+def get_current_lang(request):
+    lang = request.COOKIES.get('django_language')
+
+    if lang == 'uk':
+        LANGUAGE = u"Українська"
+        return LANGUAGE
+    else:
+        LANGUAGE = 'English'
+        return  LANGUAGE
