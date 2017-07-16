@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% block meta_title %}Журнал{% endblock meta_title %}
-{% block title %}Облік відвідування{% endblock title %}
+{% block title %}{% trans "Registration of the visit" %}{% endblock title %}
 {% block content %}
 {% if not students %}
     <div class="alert alert-warning">
@@ -11,19 +11,19 @@
     </div>
 {% else %}
     <div class="alert alert-warning">
-        Зміни в журнілі зберігаються автоматично при кожному кліку в клітинці.
-        <span id="ajax-progress-indicator">Йде збереження</span>
+        {% trans "Changes in the journal are saved automatically with each click in the cell. " %}
+        <span id="ajax-progress-indicator">{% trans "saving" %}</span>
     </div>
                      <!--Start student listing-->
-                     <p class="text-center" id="journal-nav" ><a href="?month={{ prev_month }}" title="Попередній місяць">&larr;</a>
+                     <p class="text-center" id="journal-nav" ><a href="?month={{ prev_month }}" title="{% trans 'previous month'%}">&larr;</a>
                         <strong>{% trans month_verbose %} {{ year }}</strong>
-                         <a href="?month={{ next_month }}" title="Наступний місяць">&rarr;</a>
+                         <a href="?month={{ next_month }}" title="{% trans 'next month' %}">&rarr;</a>
                      </p>
                      <table class="table table-hover table-striped table-bordered" id="student-journal">
                          <thead>
                              <tr class="header">
                                  <th class="num"> №</th>
-                                 <th class="name">Студент</th>
+                                 <th class="name">{% trans "student"%}</th>
                                  {% for day in month_header %}
 
                                  <th class="day-header">{% trans day.verbose %}<br/>{{day.day}}</th>

@@ -9,12 +9,26 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
+from django.conf import global_settings
+
+#from .env_settings import SECRET_KEY, DEBUG, TEMPLATE_DEBUG, ALLOWED_HOSTS
+#from .env_settings import SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_FACEBOOK_KEY
+#from .env_settings import DATABASES, STATIC_URL, MEDIA_URL, MEDIA_ROOT
+#from .env_settings import ADMIN_EMAIL, EMAIL_HOST, EMAIL_PORT, EMAIL_USE_SSL
+#from .env_settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS
+#from .env_settings import PORTAL_URL
+
+# in dev envrironment we may not have STATIC_ROOT defined
+try:
+    from .env_settings import STATIC_ROOT
+except ImportError:
+    pass
+
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+SECRET_KEY = '-1h6=v&gy+kpl_-)-dmwyvy4cg-1mly^l345n%%*x41=t$+2k%'
 LOG_FILE = os.path.join(BASE_DIR, 'studentsdb.log')
 
 LOGIN_URL = 'users:auth_login'
@@ -72,7 +86,7 @@ LOGGING = {
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-1h6=v&gy+kpl_-)-dmwyvy4cg-1mly^l345n%%*x41=t$+2k%'
+#SECRET_KEY = '-1h6=v&gy+kpl_-)-dmwyvy4cg-1mly^l345n%%*x41=t$+2k%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -155,22 +169,14 @@ WSGI_APPLICATION = 'studentsdb.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'..','media')
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-	'HOST':'127.0.0.1',
-	'USER':'alex_root',
-	'PASSWORD':'8800',
-	'NAME':'students_db',
-        #'NAME': os.path.join(BASE_DIR,'..', 'db.sqlite3'),
-    }
-}
+from db import DATABASES
 
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },

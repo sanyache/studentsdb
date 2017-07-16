@@ -1,9 +1,10 @@
 {% extends "students/base.html" %}
+{% load i18n %}
 {% load static from staticfiles %}
-{% block meta_title %}Групи{% endblock meta_title %}
-{% block title %}База груп{% endblock title %}
+{% block meta_title %}{% trans "Groups" %}{% endblock meta_title %}
+{% block title %}{% trans "Groups" %}{% endblock title %}
 {% block content %}
-<a href="{% url 'groups_add' %}" class="btn btn-primary">Додати групу</a>
+<a href="{% url 'groups_add' %}" class="btn btn-primary">{% trans "Add group" %}</a>
                      <!--Start student listing-->
                      <table class="table table-hover table-striped">
                          <thead>
@@ -11,40 +12,37 @@
                                  <th><a href=""></a> №</th>
                                  <th>
                                      <a href="{% url "groups" %}?order_by=title{% if request.GET.order_by == 'title' and request.GET.reverse != '1' %}&amp;reverse=1{% endif %}">
-                                        Назва
+                                        {% trans 'Title' %}
                                          {% if request.GET.order_by == 'title' and request.GET.reverse != '1' %}&uarr;
                                            {% elif request.GET.order_by == 'title' and request.GET.reverse == '1' %}&darr;
                                          {% endif %}
                                      </a>
                                  </th>
-                                 <th><a href="{% url "groups" %}"> Староста </a></th>
-                                 <th>Дії</th>
+                                 <th><a href="{% url "groups" %}"> {% trans "Leader" %} </a></th>
+                                 <th>{% trans "Actions" %}</th>
                              </tr>
                          </thead>
                          <tbody>
                              {% for group in groups %}
                              <tr>
                                  <td>{{ forloop.counter}}</td>
-                                 <td><a title="Редагувати" href="#"> {{group.title }}</a> </td>
-                                 <td><a title="Редагувати" href="#">{{group.leader}}</a> </td>
+                                 <td><a title="{% trans 'Edit' %}" href="{% url 'groups_edit' group.id %}"> {{group.title }}</a> </td>
+                                 <td><a title="{% trans 'Edit' %}" href="{% url 'groups_edit' group.id %}">{{group.leader}}</a> </td>
                                  <td>
                                      <div class="dropdown">
                                          <button class="btn btn-default dropdown-toggle"
-                                                 type="button" data-toggle="dropdown">Дія
+                                                 type="button" data-toggle="dropdown">{% trans "Action" %}
                                              <span class="caret"></span>
                                          </button>
                                          <ul class="dropdown-menu" role="menu">
-                                             <li role="presentation">
-                                                 <a role="mrnuitem" tabindex="-1"
-                                                    href="#">Відвідування</a>
-                                             </li>
+
                                              <li role="presentation">
                                                  <a role="menuitem" tabindex="-1" href="{% url 'groups_edit' group.id %}"
-                                                    >Редагувати</a>
+                                                    >{% trans "Edit" %}</a>
                                              </li>
                                              <li role="presentation">
                                                  <a role="menuitem" tabindex="-1" href="{% url 'groups_delete' group.id %}"
-                                                    >Видалити</a>
+                                                    >{% trans "Delete" %}</a>
                                              </li>
                                          </ul>
                                      </div>
